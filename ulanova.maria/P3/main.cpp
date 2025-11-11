@@ -1,6 +1,9 @@
 #include <iostream>
 
 int main(int argc, char ** argv) {
+    namespace ul = ulanova;
+    ul:: size_t rows=0, cols=0;
+    //Проверка параметров входных данных
     if (argc < 4) {
         std::cerr << "Not enough arguments\n";
         return 1;
@@ -17,5 +20,10 @@ int main(int argc, char ** argv) {
         std::cerr << "First parametr is not a number \n";
         return 1;
     }
-    
+    //Открываем файл
+    std::ifstream input(argv[2]);
+    if (!input) {
+        std::cerr << "Cannot open input file\n";
+        return 1;
+    }
 }
