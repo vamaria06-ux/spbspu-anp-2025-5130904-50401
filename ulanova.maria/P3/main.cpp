@@ -9,12 +9,13 @@ int main(int argc, char ** argv) {
         return 1;
     }
     try {
-        if( argv[1]!='1' && argv[1]!='2'){
+        if( std::stoi(argv[1])!='1' && std::stoi(argv[1])!='2'){
             std::cerr << "Wrong arguments \n";
             return 1;
         }
-    } catch (const std::invalid_arguments& e){
+    } catch (const std::invalid_argument& e){
         std::cerr << "First parametr is not a number \n";
         return 1;
     }
+    
 }
