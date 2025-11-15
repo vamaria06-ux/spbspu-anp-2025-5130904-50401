@@ -24,7 +24,6 @@ int main(int argc, char const** argv)
         std::cerr << "Too many arguments\n";
         return 1;
     }
-    
     try {
         int num = std::stoi(argv[1]);
         if (num != 1 && num != 2) {
@@ -35,20 +34,16 @@ int main(int argc, char const** argv)
         std::cerr << "First parameter is not a number \n";
         return 1;
     }
-    
     std::ifstream input(argv[2]);
     if (!input) {
         std::cerr << "Cannot open input file\n";
         return 1;
     }
-    
     int** matrix = ulanova::readMatrix(input, argv, rows, cols);
     input.close();
-    
     if (!matrix) {
         return 2;
     }
-    
     std::ofstream output(argv[3]);
     if (!output) {
         std::cerr << "Cannot open output file\n";
@@ -58,19 +53,15 @@ int main(int argc, char const** argv)
         delete[] matrix;
         return 1;
     }
-    
     output << ulanova::sedlMatrix(matrix, rows, cols) << '\n';
-    
     int** transformed = ulanova::spiralTransformCopy(matrix, rows, cols);
     ulanova::outputMatrix(output, transformed, rows, cols);
-   
     for (ulanova::s_t i = 0; i < rows; i++) {
         delete[] matrix[i];
         delete[] transformed[i];
     }
     delete[] matrix;
     delete[] transformed;
-    
     return 0;
 }
 
@@ -80,12 +71,10 @@ int** ulanova::readMatrix(std::istream& input, char const** argv, s_t& rows, s_t
         std::cerr << "Invalid matrix\n";
         return nullptr;
     }
-    
     if (rows <= 0 || cols <= 0) {
         std::cerr << "Invalid matrix\n";
         return nullptr;
     }
-    
     std::string num_str = argv[1];
     int num;
     try {
@@ -94,19 +83,16 @@ int** ulanova::readMatrix(std::istream& input, char const** argv, s_t& rows, s_t
         std::cerr << "Invalid argument: " << e.what() << "\n";
         return nullptr;
     }
-    
     if (num == 1 && rows * cols > 10000) {
         std::cerr << "Matrix too large for fixed array\n";
         return nullptr;
     }
-    
     int** matrix = nullptr;
     if (rows > 0 && cols > 0) {
         matrix = new int*[rows];
         for (s_t i = 0; i < rows; i++) {
             matrix[i] = new int[cols];
         }
-        
         for (s_t i = 0; i < rows; i++) {
             for (s_t j = 0; j < cols; j++) {
                 if (!(input >> matrix[i][j])) {
@@ -164,25 +150,23 @@ int ulanova::sedlMatrix(int** matrix, s_t rows, s_t cols)
 
 void ulanova::spiralTransform(int** matrix, int rows, int cols)
 {
-    if (rows == 0 || cols == 0) return;
-    
+    if (rows == 0 || cols == 0){
+      return;
+    }
     int top = 0, bottom = rows - 1;
     int left = 0, right = cols - 1;
     int counter = 1;
-    
     while (top <= bottom && left <= right) {
         for (int j = left; j <= right; j++) {
             matrix[top][j] -= counter;
             counter++;
         }
         top++;
-        
         for (int i = top; i <= bottom; i++) {
             matrix[i][right] -= counter;
             counter++;
         }
         right--;
-        
         if (top <= bottom) {
             for (int j = right; j >= left; j--) {
                 matrix[bottom][j] -= counter;
@@ -190,7 +174,6 @@ void ulanova::spiralTransform(int** matrix, int rows, int cols)
             }
             bottom--;
         }
-        
         if (left <= right) {
             for (int i = bottom; i >= top; i--) {
                 matrix[i][left] -= counter;
@@ -204,7 +187,6 @@ void ulanova::spiralTransform(int** matrix, int rows, int cols)
 int** ulanova::spiralTransformCopy(int** matrix, int rows, int cols)
 {
     if (rows == 0 || cols == 0) return nullptr;
-    
     int** result = new int*[rows];
     for (int i = 0; i < rows; i++) {
         result[i] = new int[cols];
@@ -212,7 +194,6 @@ int** ulanova::spiralTransformCopy(int** matrix, int rows, int cols)
             result[i][j] = matrix[i][j];
         }
     }
-    
     spiralTransform(result, rows, cols);
     return result;
 }
