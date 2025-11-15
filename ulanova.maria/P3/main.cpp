@@ -41,7 +41,7 @@ int main(int argc, char const** argv)
     }
     int** matrix = ulanova::readMatrix(input, argv, rows, cols);
     input.close();
-    if (!matrix) {
+    if (!matrix && (rows > 0 || cols > 0)) {
         return 2;
     }
     std::ofstream output(argv[3]);
@@ -55,11 +55,12 @@ int main(int argc, char const** argv)
     }
     output << ulanova::sedlMatrix(matrix, rows, cols) << '\n';
     int** transformed = ulanova::spiralTransformCopy(matrix, rows, cols);
-    ulanova::outputMatrix(output, transformed, rows, cols);
-    for (ulanova::s_t i = 0; i < rows; i++) {
+    if (transformed){
+      ulanova::outputMatrix(output,transformed,rows,cols);
+      for (ulanova::s_t i = 0; i < rows; i++) {
         delete[] matrix[i];
         delete[] transformed[i];
-    }
+      }
     delete[] matrix;
     delete[] transformed;
     return 0;
@@ -71,7 +72,10 @@ int** ulanova::readMatrix(std::istream& input, char const** argv, s_t& rows, s_t
         std::cerr << "Invalid matrix\n";
         return nullptr;
     }
-    if (rows <= 0 || cols <= 0) {
+    if (rows == 0 || cols == 0){
+      return nullptr;
+    }
+    if (rows < 0 || cols < 0) {
         std::cerr << "Invalid matrix\n";
         return nullptr;
     }
