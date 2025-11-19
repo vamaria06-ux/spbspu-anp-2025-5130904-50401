@@ -157,8 +157,12 @@ int main(int argc, char const** argv) {
   s_t cols = 0;
   int ** matrix = ula::read_creat_Matrix(input, argv, rows, cols);
   input.close();
-  if (!matrix && (rows > 0 || cols > 0)) {
-    return 2;
+  if (!matrix) {
+    if (rows == 0 && cols == 0) {
+      return 2;
+    } else {
+        return 2;
+    }
   }
   std::ofstream output(argv[3]);
   if (!output) {
