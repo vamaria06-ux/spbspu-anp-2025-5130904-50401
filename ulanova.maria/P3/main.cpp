@@ -11,6 +11,8 @@ namespace ulanova {
     }
     if (rows == 0 || cols == 0){
       return nullptr;
+      int ** e_matrix = new int*[0];
+      return e_matrix;
     }
     size_t num = 0;
     try {
@@ -157,31 +159,40 @@ int main(int argc, char const** argv) {
   s_t cols = 0;
   int ** matrix = ula::read_creat_Matrix(input, argv, rows, cols);
   input.close();
-  if (!matrix) {
+  if (!matrix && (rows != 0 || cols != 0)) {
     return 2;
   }
   std::ofstream output(argv[3]);
   if (!output) {
     std::cerr << "Cannot open output file\n";
-    for ( s_t i = 0; i < rows; i++) {
-      delete[] matrix[i];
+    if (matrix && rows > 0) {
+      for ( s_t i = 0; i < rows; i++) {
+        delete[] matrix[i];
+      }
+      delete[] matrix;
     }
-    delete[] matrix;
     return 1;
   }
-  output << ula::sedlMatrix(matrix, rows, cols) << '\n';
-  int ** transformed = ula::spiralTransformCopy(matrix, rows, cols);
-  if (transformed){
-    ula::outputMatrix(output,transformed,rows,cols);
-    for (ulanova::s_t i = 0; i < rows; i++) {
-      delete[] transformed[i];
-    }
-    delete[] transformed;
+  if (matrix) {
+    output << ula::sedlMatrix(matrix, rows, cols) << '\n';
+  } else {
+    output << "0\n";
   }
+  if (matrix && rows > 0 && cols > 0) {
+    int ** transformed = ula::spiralTransformCopy(matrix, rows, cols);
+    if (transformed){
+      ula::outputMatrix(output,transformed,rows,cols);
+      for (ulanova::s_t i = 0; i < rows; i++) {
+        delete[] transformed[i];
+      }
+      delete[] transformed;
+    }
 
   if (matrix) {
-    for (s_t i = 0; i < rows; i++) {
-      delete[] matrix[i];
+    if (rows > 0) {
+      for (s_t i = 0; i < rows; i++) {
+        delete[] matrix[i];
+      }
     }
     delete[] matrix;
   }
