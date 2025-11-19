@@ -143,7 +143,7 @@ int main(int argc, char const** argv) {
       std::cerr << "Wrong arguments \n";
       return 1;
     }
-  catch (const std::invalid_argument& e) {
+  } catch (const std::invalid_argument& e) {
     std::cerr << "First parameter is not a number \n";
     return 1;
   }
