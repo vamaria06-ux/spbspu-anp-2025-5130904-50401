@@ -12,10 +12,6 @@ namespace ulanova {
     if (rows == 0 || cols == 0){
       return nullptr;
     }
-    if (rows < 0 || cols < 0) {
-      std::cerr << "Invalid matrix\n";
-      return nullptr;
-    }
     size_t num = 0;
     try {
       num = std::stoi(argv[1]);
@@ -146,7 +142,8 @@ int main(int argc, char const** argv) {
     if (num != 1 && num != 2) {
       std::cerr << "Wrong arguments \n";
       return 1;
-  } catch (const std::invalid_argument& e) {
+    }
+  catch (const std::invalid_argument& e) {
     std::cerr << "First parameter is not a number \n";
     return 1;
   }
@@ -156,9 +153,10 @@ int main(int argc, char const** argv) {
     return 1;
   }
   namespace ula = ulanova;
+  s_t rows = 0;
+  s_t cols = 0;
   int ** matrix = ula::read_creat_Matrix(input, argv, rows, cols);
   input.close();
-  s_t rows = 0; s_t cols = 0;
   if (!matrix && (rows > 0 || cols > 0)) {
     return 2;
   }
@@ -176,11 +174,16 @@ int main(int argc, char const** argv) {
   if (transformed){
     ula::outputMatrix(output,transformed,rows,cols);
     for (ulanova::s_t i = 0; i < rows; i++) {
-      delete[] matrix[i];
       delete[] transformed[i];
     }
+    delete[] transformed;
   }
-  delete[] matrix;
-  delete[] transformed;
+
+  if (matrix) {
+    for (s_t i = 0; i < rows; i++) {
+      delete[] matrix[i];
+    }
+    delete[] matrix;
+  }
   return 0;
 }
