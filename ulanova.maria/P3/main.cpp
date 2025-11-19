@@ -11,8 +11,6 @@ namespace ulanova {
     }
     if (rows == 0 || cols == 0){
       return nullptr;
-      int ** e_matrix = new int*[0];
-      return e_matrix;
     }
     size_t num = 0;
     try {
@@ -187,6 +185,7 @@ int main(int argc, char const** argv) {
       }
       delete[] transformed;
     }
+  }
 
   if (matrix) {
     if (rows > 0) {
