@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstddef>
-#include <stdexpect>
+#include <stdexcept>
 namespace ulanova {
   using s_t = size_t;
   int ** read_creat_Matrix(std::istream& input, char const ** argv, s_t & rows, s_t & cols) {
