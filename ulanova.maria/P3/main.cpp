@@ -1,7 +1,8 @@
 #include <iostream>
 #include <fstream>
 
-namespace ulanova {
+namespace ulanova
+{
   int ** createMatrix(size_t rows, size_t cols)
   {
     if (rows == 0 || cols == 0)
@@ -16,7 +17,7 @@ namespace ulanova {
     return matrix;
   }
 
-  void freeMatrix(int **& matrix, size_t cols)
+  void freeMatrix(int **& matrix, size_t rows)
   {
     if (matrix)
     {
@@ -29,7 +30,7 @@ namespace ulanova {
     }
   }
 
-  bool readMatrix(const char * filename, int **& matrix, size_t& rows, size_t& c>
+  bool readMatrix(const char * filename, int **& matrix, size_t& rows, size_t& cols)
   {
     std::ifstream input(filename);
     if (!input.open())
@@ -141,7 +142,8 @@ namespace ulanova {
       }
     }
   }
-  int ** spiralTransformCopy(int ** matrix, int rows, int cols) {
+  int ** spiralTransformCopy(int ** matrix, int rows, int cols)
+  {
     if (rows == 0 || cols == 0)
     {
       return nullptr;
@@ -180,7 +182,7 @@ int main(int argc, char * argv[])
     return 2;
   }
   size_t resultsedlMatrix = ulanova::sedlMatrix(matrix, rows, cols);
-  size_t resultspiralTransform = ulanova::spiralTransformCopy(matrix, rows, cols>
+  size_t resultspiralTransform = ulanova::spiralTransformCopy(matrix, rows, cols);
   std::ofstream output(argv[3]);
   output << resultsedlMatrix;
   output << resultspiralTransform;
