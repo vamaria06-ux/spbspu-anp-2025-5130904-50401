@@ -11,7 +11,7 @@ namespace ulanova
       return nullptr;
     }
     int ** matrix = new int * [rows];
-    for (int i = 0; i < rows; ++i)
+    for (size_t i = 0; i < rows; ++i)
     {
       matrix[i] = new int[cols];
     }
@@ -69,13 +69,13 @@ namespace ulanova
 
   size_t sedlMatrix(int ** matrix, size_t rows, size_t cols)
   {
-    int saddle_count = 0;
+    size_t saddle_count = 0;
     if (rows > 0 && cols > 0)
     {
       for (size_t i = 0; i < rows; i++)
       {
-        size_t min_val = matrix[i][0];
-        size_t min_col = 0;
+        int min_val = matrix[i][0];
+        int min_col = 0;
         for (size_t j = 1; j < cols; j++)
         {
           if (matrix[i][j] < min_val)
@@ -101,7 +101,7 @@ namespace ulanova
     }
     return saddle_count;
   }
- void spiralTransform(int ** matrix, int rows, int cols) {
+ void spiralTransform(int ** matrix, size_t rows, size_t cols) {
     if (rows == 0 || cols == 0)
     {
       return;
@@ -144,7 +144,7 @@ namespace ulanova
       }
     }
   }
-  int ** spiralTransformCopy(int ** matrix, int rows, int cols)
+  int ** spiralTransformCopy(int ** matrix, size_t rows, size_t cols)
   {
     if (rows == 0 || cols == 0)
     {
@@ -184,7 +184,7 @@ int main(int argc, char * argv[])
     return 2;
   }
   size_t resultsedlMatrix = ulanova::sedlMatrix(matrix, rows, cols);
-  size_t resultspiralTransform = ulanova::spiralTransformCopy(matrix, rows, cols);
+  int resultspiralTransform = ulanova::spiralTransformCopy(matrix, rows, cols);
   std::ofstream output(argv[3]);
   output << resultsedlMatrix;
   output << resultspiralTransform;
