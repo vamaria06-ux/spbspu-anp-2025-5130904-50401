@@ -52,8 +52,8 @@ namespace ulanova
     }
     if (rows == 0 || cols == 0)
     {
-      std::cerr << "Error: Matrix dimensions are zero\n";
-      return false;
+      matrix = nullptr;
+      return true;
     }
     if (isfixedsize && (cols > 0 && rows > max_s / cols ))
     {
