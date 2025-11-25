@@ -38,6 +38,13 @@ namespace ulanova
     {
       return false;
     }
+    if (input.peek() == std::ifstream::traits_type::eof())
+    {
+      rows = 0;
+      cols = 0;
+      matrix = nullptr;
+      return false;
+    }
     if (!(input >> rows >> cols))
     {
       matrix = nullptr;
@@ -102,7 +109,7 @@ namespace ulanova
     return saddle_count;
   }
  void spiralTransform(int ** matrix, size_t rows, size_t cols) {
-    if (rows == 0 || cols == 0)
+    if (rows == 0 || cols == 0 || matrix == nullptr)
     {
       return;
     }
@@ -146,9 +153,9 @@ namespace ulanova
   }
   int ** spiralTransformCopy(int ** matrix, size_t rows, size_t cols)
   {
-    if (rows == 0 || cols == 0)
+    if (rows == 0 || cols == 0 || matrix == nullptr)
     {
-      return nullptr;
+      return 0;
     }
     int ** result = new int*[rows];
     for (size_t i = 0; i < rows; i++)
@@ -182,12 +189,6 @@ int main(int argc, char * argv[])
   {
     std::cerr << "Invalid matrix\n";
     return 2;
-  }
-  if (rows == 0 || cols == 0 || matrix == nullptr)
-  {
-    std::ofstream output(argv[3]);
-    output << "0\n";
-    return 0;
   }
   size_t resultsedlMatrix = ulanova::sedlMatrix(matrix, rows, cols);
   int** resultspiralTransform = ulanova::spiralTransformCopy(matrix, rows, cols);
