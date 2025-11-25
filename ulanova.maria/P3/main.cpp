@@ -43,7 +43,7 @@ namespace ulanova
       rows = 0;
       cols = 0;
       matrix = nullptr;
-      return false;
+      return true;
     }
     if (!(input >> rows >> cols))
     {
@@ -76,6 +76,10 @@ namespace ulanova
 
   size_t sedlMatrix(int ** matrix, size_t rows, size_t cols)
   {
+    if (rows == 0 || cols == 0 || matrix == nullptr)
+    {
+      return 0;
+    }
     size_t saddle_count = 0;
     if (rows > 0 && cols > 0)
     {
@@ -155,9 +159,13 @@ namespace ulanova
   {
     if (rows == 0 || cols == 0 || matrix == nullptr)
     {
-      return 0;
+      return nullptr;
     }
     int ** result = new int*[rows];
+    if (!result)
+    {
+      return nullptr;
+    }
     for (size_t i = 0; i < rows; i++)
     {
       result[i] = new int[cols];
@@ -185,7 +193,7 @@ int main(int argc, char * argv[])
   }
   int ** matrix = nullptr;
   size_t rows, cols;
-  if (!ulanova::readMatrix(argv[2], matrix, rows, cols,argv[1]))
+  if (!ulanova::readMatrix(argv[2], matrix, rows, cols, mode[0]=='1'))
   {
     std::cerr << "Invalid matrix\n";
     return 2;
