@@ -3,6 +3,7 @@
 
 namespace ulanova
 {
+  const size_t max_s = 10000;
   int ** createMatrix(size_t rows, size_t cols)
   {
     if (rows == 0 || cols == 0)
@@ -30,10 +31,10 @@ namespace ulanova
     }
   }
 
-  bool readMatrix(const char * filename, int **& matrix, size_t& rows, size_t& cols)
+  bool readMatrix(const char * filename, int **& matrix, size_t& rows, size_t& cols, bool isfixedsize)
   {
     std::ifstream input(filename);
-    if (!input.open())
+    if (!input.is_open())
     {
       return false;
     }
@@ -42,7 +43,7 @@ namespace ulanova
       matrix = nullptr;
       return false;
     }
-    if (isfixedsize && (cols > 0 && rows > 10000 / cols ))
+    if (isfixedsize && (cols > 0 && rows > max_s / cols ))
     {
       return false;
     }
@@ -135,6 +136,7 @@ namespace ulanova
       {
         for (int i = bottom; i >= top; i--)
         {
+
           matrix[i][left] -= counter;
           counter++;
         }
@@ -176,7 +178,7 @@ int main(int argc, char * argv[])
   }
   int ** matrix = nullptr;
   size_t rows, cols;
-  if (!ulanova::readMatrix(argv[2], matrix, rows, cols))
+  if (!ulanova::readMatrix(argv[2], matrix, rows, cols,argv[1]))
   {
     std::cerr << "Invalid matrix\n";
     return 2;
