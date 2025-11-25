@@ -151,10 +151,10 @@ namespace ulanova
       return nullptr;
     }
     int ** result = new int*[rows];
-    for (int i = 0; i < rows; i++)
+    for (size_t i = 0; i < rows; i++)
     {
       result[i] = new int[cols];
-      for (int j = 0; j < cols; j++)
+      for (size_t j = 0; j < cols; j++)
       {
         result[i][j] = matrix[i][j];
       }
@@ -184,7 +184,7 @@ int main(int argc, char * argv[])
     return 2;
   }
   size_t resultsedlMatrix = ulanova::sedlMatrix(matrix, rows, cols);
-  int resultspiralTransform = ulanova::spiralTransformCopy(matrix, rows, cols);
+  int** resultspiralTransform = ulanova::spiralTransformCopy(matrix, rows, cols);
   std::ofstream output(argv[3]);
   output << resultsedlMatrix;
   output << resultspiralTransform;
