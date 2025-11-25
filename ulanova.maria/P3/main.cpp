@@ -41,7 +41,7 @@ namespace ulanova
     if (!(input >> rows >> cols))
     {
       matrix = nullptr;
-      return false;
+      return true;
     }
     if (isfixedsize && (cols > 0 && rows > max_s / cols ))
     {
@@ -183,11 +183,24 @@ int main(int argc, char * argv[])
     std::cerr << "Invalid matrix\n";
     return 2;
   }
+  if (rows == 0 || cols == 0 || matrix == nullptr)
+  {
+    std::ofstream output(argv[3]);
+    output << "0\n";
+    return 0;
+  }
   size_t resultsedlMatrix = ulanova::sedlMatrix(matrix, rows, cols);
   int** resultspiralTransform = ulanova::spiralTransformCopy(matrix, rows, cols);
   std::ofstream output(argv[3]);
   output << resultsedlMatrix;
-  output << resultspiralTransform;
+  for (size_t i = 0; i< rows; i++)
+  {
+    for (size_t j = 0; j < cols; j++ )
+    {
+      output << resultspiralTransform[i][j];
+    }
+  }
   ulanova::freeMatrix(matrix, rows);
+  ulanova::freeMatrix(resultspiralTransform,rows);
   return 0;
 }
