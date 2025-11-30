@@ -160,9 +160,9 @@ int main(int argc, char* argv[])
   int* matrix = ulanova::readMatrix(input, rows, cols, isFixedSize);
   if (!matrix)
   {
-    if (rows != 0 && cols != 0)
+    if (rows != 0 || cols != 0)
     {
-      return 2;
+      return 4;
     }
     output << "0\n";
     return 0;
