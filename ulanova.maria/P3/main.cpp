@@ -6,17 +6,23 @@ namespace ulanova {
     if (!(input >> rows >> cols))
     {
       std::cerr << "Error: Invalid matrix\n";
+      rows = 0;
+      cols = 0;
       return nullptr;
     }
 
     if (rows == 0 || cols == 0)
     {
+      rows = 0;
+      cols = 0;
       return nullptr;
     }
 
     if (isFixedSize && rows * cols > 10000)
     {
       std::cerr << "Error: Matrix maximum size (10000)\n";
+      rows = 0;
+      cols = 0;
       return nullptr;
     }
     int* matrix = new int[rows * cols];
@@ -27,6 +33,9 @@ namespace ulanova {
         if (!(input >> matrix[i * cols + j]))
         {
           delete[] matrix;
+          std::cerr << "Error: Failed to read matrix \n";
+          rows = 0;
+          cols = 0;
           return nullptr;
         }
       }
@@ -151,7 +160,12 @@ int main(int argc, char* argv[])
   int* matrix = ulanova::readMatrix(input, rows, cols, isFixedSize);
   if (!matrix)
   {
-    return 2;
+    if (rows != 0 && cols != 0)
+    {
+      return 2;
+    }
+    output << "0\n";
+    return 0;
   }
   size_t saddleCount = ulanova::countSaddlePoints(matrix, rows, cols);
   ulanova::spiralTransform(matrix, rows, cols);
