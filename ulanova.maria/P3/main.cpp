@@ -1,229 +1,169 @@
 #include <iostream>
 #include <fstream>
 
-namespace ulanova
-{
-  const size_t max_s = 10000;
-  int ** createMatrix(size_t rows, size_t cols)
-  {
+namespace ulanova {
+  int*  readMatrix(std::ifstream& input, size_t& rows, size_t& cols, bool isFixedSize) {
+    if (!(input >> rows >> cols))
+    {
+      std::cerr << "Error: Invalid matrix\n";
+      return nullptr;
+    }
+
     if (rows == 0 || cols == 0)
     {
       return nullptr;
     }
-    int ** matrix = new int * [rows];
+
+    if (isFixedSize && rows * cols > 10000)
+    {
+      std::cerr << "Error: Matrix maximum size (10000)\n";
+      return nullptr;
+    }
+    int* matrix = new int[rows * cols];
     for (size_t i = 0; i < rows; ++i)
     {
-      matrix[i] = new int[cols];
+      for (size_t j = 0; j < cols; ++j)
+      {
+        if (!(input >> matrix[i * cols + j]))
+        {
+          delete[] matrix;
+          return nullptr;
+        }
+      }
     }
     return matrix;
   }
-
-  void freeMatrix(int **& matrix, size_t rows)
+  void freeMatrix(int* matrix)
   {
-    if (matrix)
-    {
-      for (size_t i = 0; i < rows; ++i)
-      {
-        delete[] matrix[i];
-      }
-      delete[] matrix;
-      matrix = nullptr;
-    }
+    delete[] matrix;
   }
 
-  bool readMatrix(const char * filename, int **& matrix, size_t& rows, size_t& cols, bool isfixedsize)
+  size_t countSaddlePoints(const int* matrix, size_t rows, size_t cols)
   {
-    std::ifstream input(filename);
-    if (!input.is_open())
-    {
-      std::cerr << "Error: Cannot open file '" << filename << "'\n";
-      return false;
-    }
-    input.peek();
-    if (input.eof())
-    {
-      std::cerr << "Error: File '" << filename << "' is empty\n";
-      return false;
-    }
-    if (!(input >> rows >> cols))
-    {
-      std::cerr << "Error: Invalid matrix dimensions in '" << filename << "'\n";
-      return false;
-    }
-    if (rows == 0 || cols == 0)
-    {
-      matrix = nullptr;
-      return true;
-    }
-    if (isfixedsize && (cols > 0 && rows > max_s / cols ))
-    {
-      std::cerr << "Error: Matrix exceeds maximum size (" << max_s << ")\n";
-      return false;
-    }
-    matrix = createMatrix(rows, cols);
-    if (!matrix)
-    {
-      return false;
-    }
-    for (size_t i = 0; i < rows; i++)
-    {
-      for (size_t j = 0; j < cols; j++)
-      {
-        if (!(input >> matrix[i][j]))
-        {
-          freeMatrix(matrix,rows);
-          matrix = nullptr;
-          return false;
-        }
-      }
-    }
-    return true;
-  }
-
-  size_t sedlMatrix(int ** matrix, size_t rows, size_t cols)
-  {
-    if (rows == 0 || cols == 0 || !matrix)
+    if (!matrix || rows == 0 || cols == 0)
     {
       return 0;
     }
-    size_t saddle_count = 0;
-    if (rows > 0 && cols > 0)
+
+    size_t saddleCount = 0;
+
+    for (size_t i = 0; i < rows; ++i)
     {
-      for (size_t i = 0; i < rows; i++)
+      int minVal = matrix[i * cols];
+      size_t minCol = 0;
+      for (size_t j = 1; j < cols; ++j)
       {
-        int min_val = matrix[i][0];
-        int min_col = 0;
-        for (size_t j = 1; j < cols; j++)
+        if (matrix[i * cols + j] < minVal)
         {
-          if (matrix[i][j] < min_val)
-          {
-            min_val = matrix[i][j];
-            min_col = j;
-          }
-        }
-        bool is_max = true;
-        for (size_t k = 0; k < rows; k++)
-        {
-          if (matrix[k][min_col] > min_val)
-          {
-            is_max = false;
-            break;
-          }
-        }
-        if (is_max)
-        {
-          saddle_count++;
+          minVal = matrix[i * cols + j];
+          minCol = j;
         }
       }
+      bool isMax = true;
+      for (size_t k = 0; k < rows; ++k)
+      {
+        if (matrix[k * cols + minCol] > minVal)
+        {
+          isMax = false;
+          break;
+        }
+      }
+
+      if (isMax)
+      {
+        saddleCount++;
+      }
     }
-    return saddle_count;
+    return saddleCount;
   }
- void spiralTransform(int ** matrix, size_t rows, size_t cols) {
-    if (rows == 0 || cols == 0 || !matrix)
+  void spiralTransform(int* matrix, size_t rows, size_t cols)
+  {
+    if (!matrix || rows == 0 || cols == 0)
     {
       return;
     }
+
     int top = 0, bottom = rows - 1;
     int left = 0, right = cols - 1;
     int counter = 1;
+
     while (top <= bottom && left <= right)
     {
-      for (int j = left; j <= right; j++)
+      for (int j = left; j <= right; ++j)
       {
-        matrix[top][j] -= counter;
-        counter++;
+        matrix[top * cols + j] -= counter++;
       }
       top++;
-      for (int i = top; i <= bottom; i++)
+      for (int i = top; i <= bottom; ++i)
       {
-        matrix[i][right] -= counter;
-        counter++;
+        matrix[i * cols + right] -= counter++;
       }
       right--;
       if (top <= bottom)
       {
-        for (int j = right; j >= left; j--)
+        for (int j = right; j >= left; --j)
         {
-          matrix[bottom][j] -= counter;
-          counter++;
+          matrix[bottom * cols + j] -= counter++;
         }
         bottom--;
       }
       if (left <= right)
       {
-        for (int i = bottom; i >= top; i--)
+        for (int i = bottom; i >= top; --i)
         {
-
-          matrix[i][left] -= counter;
-          counter++;
+          matrix[i * cols + left] -= counter++;
         }
         left++;
       }
     }
+
   }
-  int ** spiralTransformCopy(int ** matrix, size_t rows, size_t cols)
-  {
-    if (rows == 0 || cols == 0 || !matrix)
-    {
-      return nullptr;
-    }
-    int ** result = new int*[rows];
-    if (!result)
-    {
-      return nullptr;
-    }
-    for (size_t i = 0; i < rows; i++)
-    {
-      result[i] = new int[cols];
-      for (size_t j = 0; j < cols; j++)
-      {
-        result[i][j] = matrix[i][j];
-      }
-    }
-    spiralTransform(result, rows, cols);
-    return result;
-  }
+
 }
-int main(int argc, char * argv[])
+
+int main(int argc, char* argv[])
 {
   if (argc != 4)
   {
-    std::cerr << "Error arguments, need 3\n";
+    std::cerr << "Error: Need 3 arguments\n";
     return 1;
   }
-  const char * mode = argv[1];
+  const char* mode = argv[1];
   if (mode[0] != '1' && mode[0] != '2')
   {
-    std::cerr << "Error mode 1 or 2\n";
+    std::cerr << "Error: Mode must be 1 or 2\n";
     return 1;
   }
-  int ** matrix = nullptr;
-  size_t rows, cols;
-  bool isfixedsize = (mode[0] == '1');
-  if (!ulanova::readMatrix(argv[2], matrix, rows, cols, isfixedsize))
+  bool isFixedSize = (mode[0] == '1');
+  std::ifstream input(argv[2]);
+  if (!input)
+  {
+    std::cerr << "Error: Cannot open input file \n";
+    return 2;
+  }
+  std::ofstream output(argv[3]);
+  if (!output)
+  {
+    std::cerr << "Error: Cannot open output file\n";
+    return 3;
+  }
+  size_t rows = 0, cols = 0;
+  int* matrix = ulanova::readMatrix(input, rows, cols, isFixedSize);
+  if (!matrix)
   {
     return 2;
   }
-  size_t resultsedlMatrix = ulanova::sedlMatrix(matrix, rows, cols);
-  int** resultspiralTransform = ulanova::spiralTransformCopy(matrix, rows, cols);
-  std::ofstream output(argv[3]);
-  if (!output.is_open())
+  size_t saddleCount = ulanova::countSaddlePoints(matrix, rows, cols);
+  ulanova::spiralTransform(matrix, rows, cols);
+  output << saddleCount << "\n";
+  for (size_t i = 0; i < rows; ++i)
   {
-    std::cerr << "Error: Cannot open output file '" << argv[3] << "'\n";
-    ulanova::freeMatrix(matrix, rows);
-    ulanova::freeMatrix(resultspiralTransform, rows);
-    return 3;
-  }
-  output << resultsedlMatrix<< "\n";
-  for (size_t i = 0; i< rows; i++)
-  {
-    for (size_t j = 0; j < cols; j++ )
+    for (size_t j = 0; j < cols; ++j)
     {
-      output << resultspiralTransform[i][j];
+      output << matrix[i * cols + j] << " ";
     }
     output << "\n";
   }
-  ulanova::freeMatrix(matrix, rows);
-  ulanova::freeMatrix(resultspiralTransform,rows);
+  ulanova::freeMatrix(matrix);
   return 0;
 }
