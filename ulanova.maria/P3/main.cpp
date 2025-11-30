@@ -2,27 +2,23 @@
 #include <fstream>
 
 namespace ulanova {
-  int*  readMatrix(std::ifstream& input, size_t& rows, size_t& cols, bool isFixedSize) {
+  int*  readMatrix(std::ifstream& input, size_t& rows, size_t& cols, bool isFixedSize, bool& hadReadError) {
     if (!(input >> rows >> cols))
     {
       std::cerr << "Error: Invalid matrix\n";
-      rows = 0;
-      cols = 0;
+      hadReadError = true;
       return nullptr;
     }
 
     if (rows == 0 || cols == 0)
     {
-      rows = 0;
-      cols = 0;
       return nullptr;
     }
 
     if (isFixedSize && rows * cols > 10000)
     {
       std::cerr << "Error: Matrix maximum size (10000)\n";
-      rows = 0;
-      cols = 0;
+      hadReadError = true;
       return nullptr;
     }
     int* matrix = new int[rows * cols];
@@ -34,8 +30,7 @@ namespace ulanova {
         {
           delete[] matrix;
           std::cerr << "Error: Failed to read matrix \n";
-          rows = 0;
-          cols = 0;
+          hadReadError = true;
           return nullptr;
         }
       }
@@ -157,10 +152,11 @@ int main(int argc, char* argv[])
     return 3;
   }
   size_t rows = 0, cols = 0;
-  int* matrix = ulanova::readMatrix(input, rows, cols, isFixedSize);
+  bool hadReadError = false;
+  int* matrix = ulanova::readMatrix(input, rows, cols, isFixedSize, hadReadError);
   if (!matrix)
   {
-    if (rows != 0 || cols != 0)
+    if (hadReadError)
     {
       return 4;
     }
