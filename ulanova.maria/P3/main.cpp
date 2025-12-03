@@ -2,7 +2,8 @@
 #include <fstream>
 
 namespace ulanova {
-  int*  readMatrix(std::ifstream& input, size_t& rows, size_t& cols, bool isFixedSize, bool& hadReadError) {
+  int*  readMatrix(std::ifstream& input, size_t& rows, size_t& cols, bool isFixedSize, bool& hadReadError)
+  {
     if (!(input >> rows >> cols))
     {
       std::cerr << "Error: Invalid matrix\n";
@@ -37,11 +38,6 @@ namespace ulanova {
     }
     return matrix;
   }
-  void freeMatrix(int* matrix)
-  {
-    delete[] matrix;
-  }
-
   size_t countSaddlePoints(const int* matrix, size_t rows, size_t cols)
   {
     if (!matrix || rows == 0 || cols == 0)
@@ -174,6 +170,6 @@ int main(int argc, char* argv[])
     }
     output << "\n";
   }
-  ulanova::freeMatrix(matrix);
+  delete[] matrix;
   return 0;
 }
