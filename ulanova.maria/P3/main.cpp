@@ -2,41 +2,39 @@
 #include <fstream>
 
 namespace ulanova {
-  int*  readMatrix(std::ifstream& input, size_t& rows, size_t& cols, bool isFixedSize, bool& hadReadError)
+  int* makeMatrix(bool isFixedsize, size_t elements, int* fixedStorage, bool& hadError)
   {
-    if (!(input >> rows >> cols))
+    if (isFixedsize)
     {
-      std::cerr << "Error: Invalid matrix\n";
-      hadReadError = true;
-      return nullptr;
-    }
-
-    if (rows == 0 || cols == 0)
-    {
-      return nullptr;
-    }
-
-    if (isFixedSize && rows * cols > 10000)
-    {
-      std::cerr << "Error: Matrix maximum size (10000)\n";
-      hadReadError = true;
-      return nullptr;
-    }
-    int* matrix = new int[rows * cols];
-    for (size_t i = 0; i < rows; ++i)
-    {
-      for (size_t j = 0; j < cols; ++j)
+      if (elements > 10000)
       {
-        if (!(input >> matrix[i * cols + j]))
-        {
-          delete[] matrix;
-          std::cerr << "Error: Failed to read matrix \n";
-          hadReadError = true;
-          return nullptr;
-        }
+        std::cerr << "Error: Matrix maximum size (10000)\n";
+        hadError = true;
+        return nullptr;
       }
+      return fixedStorage;
+    } else
+    {
+      int* matrix = new int[elements];
+      if (!matrix)
+      {
+        std::cerr << "Error: Memory allocation failed\n";
+        hadError = true;
+        return nullptr;
+      }
+      return matrix;
     }
-    return matrix;
+  }
+  bool readMatrix(std::ifstream& input,int* matrix, size_t rows, size_t cols)
+  {
+      for (size_t i = 0; i < rows; ++i) {
+        for (size_t j = 0; j < cols; ++j) {
+            if (!(input >> matrix[i * cols + j])) {
+                return false;
+            }
+        }
+    }
+    return true;
   }
   size_t countSaddlePoints(const int* matrix, size_t rows, size_t cols)
   {
@@ -148,16 +146,32 @@ int main(int argc, char* argv[])
     return 3;
   }
   size_t rows = 0, cols = 0;
-  bool hadReadError = false;
-  int* matrix = ulanova::readMatrix(input, rows, cols, isFixedSize, hadReadError);
-  if (!matrix)
+  if (!(input >> rows >> cols))
   {
-    if (hadReadError)
+    std::cerr<<"Error: Invalid matrix\n";
+    return 4;
+  }
+  if (rows == 0 || cols == 0)
+  {
+     output << "0\n";
+     return 0;
+  }
+  size_t elements = rows * cols;
+  int fixedStorage[10000] = {};
+  bool hadError = false;
+  int* matrix = ulanova::makeMatrix(isFixedSize, elements, fixedStorage, hadError);
+  if (hadError || !matrix)
+  {
+    return 4;
+  }
+  if (!ulanova::readMatrix(input, matrix, rows, cols))
+  {
+    std::cerr << "Error: Failed to read matrix data\n";
+    if (!isFixedSize)
     {
-      return 4;
+      delete[] matrix;
     }
-    output << "0\n";
-    return 0;
+    return 4;
   }
   size_t saddleCount = ulanova::countSaddlePoints(matrix, rows, cols);
   ulanova::spiralTransform(matrix, rows, cols);
@@ -170,6 +184,9 @@ int main(int argc, char* argv[])
     }
     output << "\n";
   }
-  delete[] matrix;
+  if (!isFixedSize)
+  {
+    delete[] matrix;
+  }
   return 0;
 }
