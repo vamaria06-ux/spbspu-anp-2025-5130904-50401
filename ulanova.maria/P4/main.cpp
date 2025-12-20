@@ -76,3 +76,25 @@ namespace ulanova
     result[idx] = '\0';
   }
 }
+int main()
+{
+  const size_t max_input_size = 1024;
+  const size_t max_result_size = 2048;
+  char input[max_input_size];
+  char result[max_result_size];
+  if (!std::cin.getline(input, max_input_size))
+  {
+    std::cerr << "Error: input long\n";
+    return 1;
+  }
+  const char* excludeStr = "abc";
+  const char* digitsStr = "g1h2k";
+  ulanova::excludeChars(input, excludeStr, result , max_result_size);
+  if (result[0] == '\0')
+  {
+    std::cerr << "Error: result bufer over\n";
+    return 1;
+  }
+  std::cout << result << '\n';
+  return 0;
+}
