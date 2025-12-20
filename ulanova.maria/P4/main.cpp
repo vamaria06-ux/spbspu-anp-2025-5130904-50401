@@ -96,5 +96,12 @@ int main()
     return 1;
   }
   std::cout << result << '\n';
+  ulanova::appendDigits(input, digitsStr, result, max_result_size);
+  if (result[0] == '\0')
+  {
+    std::cerr << "Error: result bufer over\n";
+    return 1;
+  }
+  std::cout << result << '\n';
   return 0;
 }
