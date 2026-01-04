@@ -1,8 +1,21 @@
 #include <iostream>
 #include <cstring>
 #include <cctype>
+#include <cstdlib>
 namespace ulanova
 {
+  сhar * extend(char * old_buffer, size_t old_size, size_t new_size) {
+    char * new_buffer = static_cast <char *>(malloc(new_size * sizeof(char)));
+    if (!new_buffer)
+    {
+      return nullptr;
+    }
+    for (size_t i = 0; i < old_size; ++i)
+    {
+     new_buffer[i] = old_buffer[i];
+    }
+    return new_buffer;
+  }
   void excludeChars(const char* src, const char* exclude, char* result, size_t resultSize)
   {
     if (!src || !exclude || !result || resultSize == 0)
