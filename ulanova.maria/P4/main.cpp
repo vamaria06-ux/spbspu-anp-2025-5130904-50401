@@ -142,21 +142,31 @@ namespace ulanova
 }
 int main()
 {
-  const size_t max_input_size = 1024;
-  const size_t max_result_size = 2048;
-  char input[max_input_size];
-  char result[max_result_size];
-  if (!std::cin.getline(input, max_input_size))
+  size_t s;
+  size_t st;
+  char * input = nullptr;
+  input = ulanova::getline(std::cin, s, st);
+  if (!input)
   {
-    std::cerr << "Error: input long\n";
-    return 1;
+    if (st == 1)
+    {
+      std::cerr << "Error EOF\n";
+      return 2;
+    } else {
+      std::cerr << "Error memory\n";
+      return 1;
+    }
   }
+  const size_t max_result_size = 2048;
+  char result[max_result_size];
   const char* excludeStr = "abc";
   const char* digitsStr = "g1h2k";
+
   ulanova::excludeChars(input, excludeStr, result , max_result_size);
   if (result[0] == '\0')
   {
     std::cerr << "Error: result bufer over\n";
+    free(input);
     return 1;
   }
   std::cout << result << '\n';
@@ -164,8 +174,10 @@ int main()
   if (result[0] == '\0')
   {
     std::cerr << "Error: result bufer over\n";
+    free(input);
     return 1;
   }
   std::cout << result << '\n';
+  free(input);
   return 0;
 }
