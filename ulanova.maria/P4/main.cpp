@@ -2,9 +2,11 @@
 #include <cstring>
 #include <cctype>
 #include <cstdlib>
+#include <iomanip>
 namespace ulanova
 {
-  сhar * extend(char * old_buffer, size_t old_size, size_t new_size) {
+  сhar * extend(char * old_buffer, size_t old_size, size_t new_size)
+  {
     char * new_buffer = static_cast <char *>(malloc(new_size * sizeof(char)));
     if (!new_buffer)
     {
@@ -15,6 +17,55 @@ namespace ulanova
      new_buffer[i] = old_buffer[i];
     }
     return new_buffer;
+  }
+  char * getline(std::istream & in, size_t & s, size_t & st)
+  {
+    s = 0;
+    st = 0;
+    char * buffer = static_cast<char *>(malloc(1 * sizeof(char)));
+    if (!buffer)
+    {
+      return nullptr;
+    }
+    buffer[0] = '\0';
+    bool is_skipws = in.flags() & std::ios_base::skipws;
+    if (is_skipws)
+    {
+      in >> std::noskipws;
+    }
+    char ch;
+    while (in >> ch)
+    {
+      if (ch == '\n')
+      {
+        break;
+      }
+      char * new_buffer = extend(buffer, s, s + 2);
+      if (!new_buffer)
+      {
+        if (is_skipws)
+        {
+          in >> std::skipws;
+        }
+        free(buffer);
+        return nullptr;
+      }
+      free(buffer);
+      buffer = new_buffer;
+      buffer[s++] = ch;
+      buffer[s] = '\0';
+    }
+    if (in.eof())
+    {
+      st = 1;
+      free(buffer);
+      return nullptr;
+    }
+    if (is_skipws)
+    {
+      in >> std::skipws;
+    }
+    return buffer;
   }
   void excludeChars(const char* src, const char* exclude, char* result, size_t resultSize)
   {
