@@ -5,7 +5,7 @@
 #include <iomanip>
 namespace ulanova
 {
-  сhar * extend(char * old_buffer, size_t old_size, size_t new_size)
+  char * extend(char * old_buffer, size_t old_size, size_t new_size)
   {
     char * new_buffer = static_cast <char *>(malloc(new_size * sizeof(char)));
     if (!new_buffer)
@@ -98,11 +98,11 @@ namespace ulanova
     }
     result[idx] = '\0';
   }
-  void appendDigits(const char* src,const char* digitsSrc, char* result, size_t resultSize)
+  void appendDigits(const char* src,const char* digitsSrc, char* result_2, size_t resultSize)
   {
-    if (!src || !digitsSrc || !result || resultSize == 0)
+    if (!src || !digitsSrc || !result_2 || resultSize == 0)
     {
-      result[0] = '\0';
+      result_2[0] = '\0';
       return;
     }
     size_t idx = 0;
@@ -110,10 +110,10 @@ namespace ulanova
     {
       if (idx >= resultSize - 1)
       {
-        result[0] = '\0';
+        result_2[0] = '\0';
         return;
       }
-      result[idx++] = *p;
+      result_2[idx++] = *p;
     }
     for (const char* q = digitsSrc; *q != '\0'; ++q)
     {
@@ -122,7 +122,7 @@ namespace ulanova
         int exists = 0;
         for (size_t i = 0; i < idx; ++i)
         {
-          if (result[i] == *q)
+          if (result_2[i] == *q)
           {
             exists = 1;
             break;
@@ -132,12 +132,14 @@ namespace ulanova
         {
           if (idx >= resultSize - 1)
           {
-            result[idx++] = *q;
+            result_2[0] = '\0';
+            return;
           }
+          result_2[idx++] = *q;
         }
       }
     }
-    result[idx] = '\0';
+    result_2[idx] = '\0';
   }
 }
 int main()
@@ -158,6 +160,7 @@ int main()
     }
   }
   const size_t max_result_size = 2048;
+  char result_2[max_result_size];
   char result[max_result_size];
   const char* excludeStr = "abc";
   const char* digitsStr = "g1h2k";
@@ -170,14 +173,14 @@ int main()
     return 1;
   }
   std::cout << result << '\n';
-  ulanova::appendDigits(input, digitsStr, result, max_result_size);
+  ulanova::appendDigits(input, digitsStr, result_2, max_result_size);
   if (result[0] == '\0')
   {
     std::cerr << "Error: result bufer over\n";
     free(input);
     return 1;
   }
-  std::cout << result << '\n';
+  std::cout << result_2 << '\n';
   free(input);
   return 0;
 }
